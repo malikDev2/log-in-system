@@ -1,0 +1,17 @@
+.box{
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+    border: 10px solid black;
+
+}
+
+.box button{
+    width: 50px;
+
+}
+
+.body{
+    background-color: red;
+
+}
