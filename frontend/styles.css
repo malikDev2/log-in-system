@@ -3,15 +3,20 @@
     flex-direction: column;
     width: 400px;
     border: 10px solid black;
+    align-self: center;
 
 }
 
 .box button{
     width: 50px;
-
 }
 
 .body{
     background-color: red;
+    
+}
 
+.buttons{
+    display: flex;
+    gap: 20px;
 }
