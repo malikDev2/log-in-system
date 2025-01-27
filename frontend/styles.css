@@ -15,7 +15,9 @@ h1{
 }
 h1:hover{
     background: rgb(255, 155, 155);
-    cursor: wait;
+    border: 3px solid rgb(110, 58, 255);
+    cursor: none;
+    transition: 500ms;
 }
 
 .box {
