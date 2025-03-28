@@ -2,7 +2,7 @@ const express = require('express');
 const User = require('../models/user');
 const router = express.Router();
 
-// Middleware to verify JWT token
+// JWT token verification middleware
 const authenticate = (req, res, next) => {
   const token = req.header('Authorization')?.replace('Bearer ', '');
   if (!token) {
@@ -18,7 +18,7 @@ const authenticate = (req, res, next) => {
   }
 };
 
-// Search for users
+// User search route
 router.get('/search', authenticate, async (req, res) => {
   const { username } = req.query;
   try {
@@ -29,7 +29,7 @@ router.get('/search', authenticate, async (req, res) => {
   }
 });
 
-// Send friend request
+// Send friend request route
 router.post('/friend-request', authenticate, async (req, res) => {
   const { recipientId } = req.body;
   try {
@@ -53,7 +53,7 @@ router.post('/friend-request', authenticate, async (req, res) => {
   }
 });
 
-// Accept friend request
+// Accept friend request route
 router.post('/accept-request', authenticate, async (req, res) => {
   const { senderId } = req.body;
   try {
