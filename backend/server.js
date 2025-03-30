@@ -4,39 +4,29 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const notFound = require('./middleware/not-found');
 const errorHandlerMiddleware = require('./middleware/error-handler');
-const authRoutes = require('./routes/auth');
-const userRoutes = require('./routes/userRoutes');
 
 const app = express();
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Routes
+const authRoutes = require('./routes/auth');
+const userRoutes = require('./routes/userRoutes');
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 
-// Not Found Middleware
 app.use(notFound);
-
-// Error Handler Middleware
 app.use(errorHandlerMiddleware);
 
-// Start the Server
 const port = process.env.PORT || 5000;
-
 const startServer = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI);
     console.log('Connected to MongoDB');
-    app.listen(port, () => {
-      console.log(`Server running on port ${port}`);
-    });
+    app.listen(port, () => console.log(`Server running on port ${port}`));
   } catch (error) {
     console.error('Database connection failed:', error);
-    process.exit(1); // Exit process with failure
+    process.exit(1);
   }
 };
-
 startServer();
