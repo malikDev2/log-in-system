@@ -3,6 +3,11 @@ html{
     text-align: center;
 }
 
+.search{
+  align-items: center;
+  display: flex;
+}
+
 
 
 .dash{
@@ -25,7 +30,7 @@ html{
     padding: 20px;
     
     align-self: center;
-    width: 800px;
+    width: 1000px;
     justify-self: center;
     box-shadow:
       0 0 15px rgba(0, 200, 255, 0.3), /* Blue glow */
@@ -49,8 +54,9 @@ html{
       0 8px 40px rgba(0, 0, 0, 0.25);
   }
 
-.dash div{
+.dash div:not(.search){
     max-height: 300px;
+    width: 300px;
     margin: 10px;
     background: rgba(255, 255, 255, 0.5);
     border: none;
@@ -58,7 +64,7 @@ html{
     transition: all 0.3s ease;
 }
 
-.dash div:hover{
+.dash div:hover:not(.search){
     transform: scale(1.02);
     box-shadow:
       0 0 20px rgb(0, 255, 60),
@@ -68,10 +74,7 @@ html{
 }
 
 .nav{
-    background: purple;
-    width: 300px;
-    border: 5px solid black;
-    text-align: center;
+  text-align: center;
 }
 
 
@@ -81,11 +84,7 @@ html{
 }
 
 .inbox{
-    background: blue;
-    width: 200px;
-    border: 5px solid black;
-    margin-top: 30px;
-    text-align: center;
+  text-align: center;
 }
 
 .main{
