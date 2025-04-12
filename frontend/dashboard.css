@@ -8,8 +8,6 @@ html{
   display: flex;
 }
 
-
-
 .dash{
     display: flex;
     gap: 10px;
@@ -91,6 +89,67 @@ html{
     background: rgba(243, 147, 147, 0.255);
     text-align: center;
     border-radius: 10px;
+}
+
+/* Add these to your existing dashboard.css */
+
+.request-item {
+  background: rgba(255, 255, 255, 0.7);
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.request-item button {
+  margin-left: 10px;
+  padding: 3px 8px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.request-item .accept-btn {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.request-item .decline-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+.search-result {
+  background: rgba(255, 255, 255, 0.7);
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.search-result button {
+  padding: 5px 10px;
+  background-color: #2196F3;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+#searchResults {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-top: 10px;
+}
+
+#requestsList {
+  max-height: 200px;
+  overflow-y: auto;
+  margin-top: 10px;
 }
 
 

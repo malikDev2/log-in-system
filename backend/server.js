@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const path = require('path'); 
 const notFound = require('./middleware/not-found');
 const errorHandlerMiddleware = require('./middleware/error-handler');
 
@@ -10,11 +11,21 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// API Routes
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/userRoutes');
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 
+
+app.use(express.static(path.join(__dirname, 'frontend'))); 
+
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend', 'index.html'));
+});
+
+// Error Handling 
 app.use(notFound);
 app.use(errorHandlerMiddleware);
 

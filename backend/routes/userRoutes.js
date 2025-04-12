@@ -69,4 +69,62 @@ router.post('/accept-request', authenticate, async (req, res) => {
   }
 });
 
+
+
+// Get current user's info
+router.get('/me', authenticate, async (req, res) => {
+  try {
+      const user = await User.findById(req.userId);
+      res.status(200).json(user);
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+});
+
+// Get friend requests
+router.get('/requests', authenticate, async (req, res) => {
+  try {
+      const user = await User.findById(req.userId).populate('requestsInbox', 'username');
+      const requests = user.requestsInbox.map(sender => ({
+          senderId: sender._id,
+          senderUsername: sender.username
+      }));
+      res.status(200).json(requests);
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+});
+
+// Accept request endpoint
+router.post('/accept-request', authenticate, async (req, res) => {
+  try {
+      const { senderId } = req.body;
+      // ... existing accept logic ...
+      res.status(200).json({ message: 'Friend request accepted' });
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+});
+
+// Decline request endpoint
+router.post('/decline-request', authenticate, async (req, res) => {
+  try {
+      const { senderId } = req.body;
+      const user = await User.findById(req.userId);
+      
+      user.requestsInbox = user.requestsInbox.filter(id => id !== senderId);
+      await user.save();
+      
+      const sender = await User.findById(senderId);
+      if (sender) {
+          sender.requestsSent = sender.requestsSent.filter(id => id !== req.userId);
+          await sender.save();
+      }
+      
+      res.status(200).json({ message: 'Friend request declined' });
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = router;
