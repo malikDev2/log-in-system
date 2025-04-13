@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login System</title>
     
-    <link rel="stylesheet" href="/frontend/styles.css">
+    <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
     <h1>Log-in System</h1>
@@ -79,7 +79,9 @@
                 const data = await response.json();
                 if (data.token) {
                     localStorage.setItem('token', data.token);
+                    localStorage.setItem('username', usernameInput.value);
                     showMessage('Login successful!');
+                    window.location.href = '/dashboard.html';
                     // Redirect or load protected content here
                 } else {
                     showMessage(data.message || 'Login failed', true);

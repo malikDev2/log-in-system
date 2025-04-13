@@ -1,3 +1,26 @@
+
+
+function verifyAuth() {
+    const token = localStorage.getItem('token');
+    if (!token) {
+        window.location.href = '/index.html';
+        return false;
+    }
+    return true;
+}
+
+// Modified DOMContentLoaded handler
+document.addEventListener('DOMContentLoaded', async () => {
+    if (!verifyAuth()) return;
+    
+    await fetchCurrentUser();
+    loadFriendRequests();
+    setupEventListeners();
+    
+    // Add logout button handler
+    document.getElementById('logoutBtn').addEventListener('click', logout);
+});
+
 const API_URL = 'http://localhost:5000/api';
 let currentUser = null;
 
