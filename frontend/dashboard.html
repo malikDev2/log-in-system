@@ -1,36 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <link rel="stylesheet" href="dashboard.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="/dashboard.css" />
 </head>
 <body>
-    <h1>DASHBOARD</h1>
-    <div class="dash">
-        <div class="nav">
-            <h2>Navigation</h2>
-            <div class="search">
-                <input id="searchInput" type="text" placeholder="Search users...">
-                <button id="searchBtn">Search</button>
-            </div>
-            <div id="searchResults"></div>
-        </div>
-        
-        <div class="main">
-            <h2 id="welcomeMessage">Welcome back</h2>
-            <button id="logoutBtn">Logout</button>
-        </div>
-        
-        <div class="inbox">
-            <h2>Inbox</h2>
-            <h3 id="requestsCount">Requests (0)</h3>
-            <div id="requestsList"></div>
-        </div>
+  <h1>DASHBOARD</h1>
+  <div class="dash">
+    <div class="nav">
+      <h2>Navigation</h2>
+      <div class="search">
+        <input id="searchInput" type="text" placeholder="Search users..." />
+        <button id="searchBtn">Search</button>
+      </div>
+      <div id="searchResults"></div>
     </div>
 
-    <script src="script.js"></script>
-    <script src="dashboard.js"></script>
+    <div class="main">
+      <h2 id="welcomeMessage">Welcome back</h2>
+      <!-- ✅ Use direct onclick after function is defined -->
+      <button onclick="logout()">Logout</button>
+    </div>
+
+    <div class="inbox">
+      <h2>Inbox</h2>
+      <h3 id="requestsCount">Requests (0)</h3>
+      <div id="requestsList"></div>
+    </div>
+  </div>
+
+  <!-- ✅ Auth check and DOM manipulation BEFORE dashboard.js -->
+  <script>
+    const token = localStorage.getItem('token');
+    const username = localStorage.getItem('username');
+    
+    if (!token || !username) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('username');
+      window.location.replace('/');
+    } else {
+      document.addEventListener('DOMContentLoaded', () => {
+        const welcome = document.getElementById('welcomeMessage');
+        if (welcome) welcome.textContent = `Welcome back, ${username}!`;
+      });
+    }
+  </script>
+
+  <!-- ✅ dashboard.js LAST so logout() is available when HTML is parsed -->
+  <script src="/dashboard.js"></script>
 </body>
 </html>

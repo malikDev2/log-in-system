@@ -1,14 +1,14 @@
 const API_URL = 'http://localhost:5000/api';
 
-// Check if user is logged in on page load
-document.addEventListener('DOMContent', () => {
+// Auth check on page load
+document.addEventListener('DOMContentLoaded', () => {
   const token = localStorage.getItem('token');
-  if (!token && !window.location.pathname.includes('index.html')) {
-    window.location.href = 'index.html';
+  if (!token && window.location.pathname !== '/') {
+    window.location.replace('/');
   }
 });
 
-// Login function (for index.html)
+// Login handler
 if (document.getElementById('loginBtn')) {
   document.getElementById('loginBtn').addEventListener('click', async () => {
     const username = document.getElementById('username').value;
@@ -24,7 +24,8 @@ if (document.getElementById('loginBtn')) {
       
       if (data.token) {
         localStorage.setItem('token', data.token);
-        window.location.href = 'dashboard.html';
+        localStorage.setItem('username', username);
+        window.location.replace('/dashboard.html');
       } else {
         alert(data.message || 'Login failed');
       }

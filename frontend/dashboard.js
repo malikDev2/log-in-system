@@ -1,30 +1,19 @@
-
+const API_URL = 'http://localhost:5000/api';
+let currentUser = null;
 
 function verifyAuth() {
     const token = localStorage.getItem('token');
     if (!token) {
-        window.location.href = '/index.html';
+        window.location.replace('/');
         return false;
     }
     return true;
 }
 
-// Modified DOMContentLoaded handler
+// Single DOMContentLoaded handler
 document.addEventListener('DOMContentLoaded', async () => {
     if (!verifyAuth()) return;
     
-    await fetchCurrentUser();
-    loadFriendRequests();
-    setupEventListeners();
-    
-    // Add logout button handler
-    document.getElementById('logoutBtn').addEventListener('click', logout);
-});
-
-const API_URL = 'http://localhost:5000/api';
-let currentUser = null;
-
-document.addEventListener('DOMContentLoaded', async () => {
     await fetchCurrentUser();
     loadFriendRequests();
     setupEventListeners();
@@ -33,7 +22,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function fetchCurrentUser() {
     const token = localStorage.getItem('token');
     if (!token) {
-        window.location.href = 'index.html';
+        window.location.replace('/');
         return;
     }
 
@@ -47,6 +36,13 @@ async function fetchCurrentUser() {
         console.error('Failed to fetch user:', error);
         logout();
     }
+}
+
+function logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('username');
+    currentUser = null;
+    window.location.replace('/');
 }
 
 async function loadFriendRequests() {
@@ -170,7 +166,5 @@ async function handleRequest(senderId, action) {
     }
 }
 
-function logout() {
-    localStorage.removeItem('token');
-    window.location.href = 'index.html';
-}
+
+
