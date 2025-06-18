@@ -9,46 +9,38 @@
 <body>
   <h1>DASHBOARD</h1>
   <div class="dash">
+    
+    <!-- Navigation / Add Friends -->
     <div class="nav">
-      <h2>Navigation</h2>
+      <h2>Add Friends</h2>
       <div class="search">
-        <input id="searchInput" type="text" placeholder="Search users..." />
-        <button id="searchBtn">Search</button>
+        <input id="searchInput" type="text" placeholder="Enter username..." />
+        <button id="searchBtn">Add</button>
       </div>
       <div id="searchResults"></div>
     </div>
 
+    <!-- Main Area -->
     <div class="main">
       <h2 id="welcomeMessage">Welcome back</h2>
-      <!-- ✅ Use direct onclick after function is defined -->
-      <button onclick="logout()">Logout</button>
+      <button id="logoutBtn">Logout</button>
     </div>
 
+    <!-- Inbox -->
     <div class="inbox">
       <h2>Inbox</h2>
       <h3 id="requestsCount">Requests (0)</h3>
       <div id="requestsList"></div>
     </div>
+
+    <!-- Friends List -->
+    <div class="friends">
+      <h2>Friends</h2>
+      <div id="friendsList">Loading...</div>
+    </div>
+
   </div>
 
-  <!-- ✅ Auth check and DOM manipulation BEFORE dashboard.js -->
-  <script>
-    const token = localStorage.getItem('token');
-    const username = localStorage.getItem('username');
-    
-    if (!token || !username) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('username');
-      window.location.replace('/');
-    } else {
-      document.addEventListener('DOMContentLoaded', () => {
-        const welcome = document.getElementById('welcomeMessage');
-        if (welcome) welcome.textContent = `Welcome back, ${username}!`;
-      });
-    }
-  </script>
-
-  <!-- ✅ dashboard.js LAST so logout() is available when HTML is parsed -->
   <script src="/dashboard.js"></script>
 </body>
 </html>

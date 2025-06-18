@@ -1,8 +1,9 @@
 const express = require('express');
-const User = require('../models/user');
+const User = require('../models/user'); 
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 
+// Auth middleware
 const authenticate = (req, res, next) => {
   const token = req.header('Authorization')?.replace('Bearer ', '');
   if (!token) return res.status(401).json({ message: 'No token provided' });
@@ -16,7 +17,7 @@ const authenticate = (req, res, next) => {
   }
 };
 
-// User search route
+// User search
 router.get('/search', authenticate, async (req, res) => {
   try {
     const { username } = req.query;
@@ -27,7 +28,7 @@ router.get('/search', authenticate, async (req, res) => {
   }
 });
 
-// Friend request route
+// Friend request
 router.post('/friend-request', authenticate, async (req, res) => {
   try {
     const { recipientId } = req.body;
@@ -35,6 +36,10 @@ router.post('/friend-request', authenticate, async (req, res) => {
     const recipient = await User.findById(recipientId);
 
     if (!recipient) return res.status(404).json({ message: 'User not found' });
+
+    if (recipient.requestsInbox.includes(req.userId)) {
+      return res.status(400).json({ message: 'Request already sent' });
+    }
 
     sender.requestsSent.push(recipientId);
     recipient.requestsInbox.push(req.userId);
@@ -47,7 +52,7 @@ router.post('/friend-request', authenticate, async (req, res) => {
   }
 });
 
-// Accept friend request route
+// Accept request
 router.post('/accept-request', authenticate, async (req, res) => {
   try {
     const { senderId } = req.body;
@@ -56,10 +61,12 @@ router.post('/accept-request', authenticate, async (req, res) => {
 
     if (!sender) return res.status(404).json({ message: 'User not found' });
 
-    user.requestsInbox = user.requestsInbox.filter(id => id !== senderId);
-    sender.requestsSent = sender.requestsSent.filter(id => id !== req.userId);
+    user.requestsInbox = user.requestsInbox.filter(id => id.toString() !== senderId);
+    sender.requestsSent = sender.requestsSent.filter(id => id.toString() !== req.userId);
+
     user.friends.push(senderId);
     sender.friends.push(req.userId);
+
     await user.save();
     await sender.save();
 
@@ -69,61 +76,51 @@ router.post('/accept-request', authenticate, async (req, res) => {
   }
 });
 
-
-
-// Get current user's info
-router.get('/me', authenticate, async (req, res) => {
-  try {
-      const user = await User.findById(req.userId);
-      res.status(200).json(user);
-  } catch (error) {
-      res.status(500).json({ error: error.message });
-  }
-});
-
-// Get friend requests
-router.get('/requests', authenticate, async (req, res) => {
-  try {
-      const user = await User.findById(req.userId).populate('requestsInbox', 'username');
-      const requests = user.requestsInbox.map(sender => ({
-          senderId: sender._id,
-          senderUsername: sender.username
-      }));
-      res.status(200).json(requests);
-  } catch (error) {
-      res.status(500).json({ error: error.message });
-  }
-});
-
-// Accept request endpoint
-router.post('/accept-request', authenticate, async (req, res) => {
-  try {
-      const { senderId } = req.body;
-      // ... existing accept logic ...
-      res.status(200).json({ message: 'Friend request accepted' });
-  } catch (error) {
-      res.status(500).json({ error: error.message });
-  }
-});
-
-// Decline request endpoint
+// Decline request
 router.post('/decline-request', authenticate, async (req, res) => {
   try {
-      const { senderId } = req.body;
-      const user = await User.findById(req.userId);
-      
-      user.requestsInbox = user.requestsInbox.filter(id => id !== senderId);
-      await user.save();
-      
-      const sender = await User.findById(senderId);
-      if (sender) {
-          sender.requestsSent = sender.requestsSent.filter(id => id !== req.userId);
-          await sender.save();
-      }
-      
-      res.status(200).json({ message: 'Friend request declined' });
+    const { senderId } = req.body;
+    const user = await User.findById(req.userId);
+
+    user.requestsInbox = user.requestsInbox.filter(id => id.toString() !== senderId);
+    await user.save();
+
+    const sender = await User.findById(senderId);
+    if (sender) {
+      sender.requestsSent = sender.requestsSent.filter(id => id.toString() !== req.userId);
+      await sender.save();
+    }
+
+    res.status(200).json({ message: 'Friend request declined' });
   } catch (error) {
-      res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get current user
+router.get('/me', authenticate, async (req, res) => {
+  try {
+    const user = await User.findById(req.userId).populate('friends', 'username');;
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get inbox requests with usernames
+router.get('/requests', authenticate, async (req, res) => {
+  try {
+    const user = await User.findById(req.userId);
+    const senders = await User.find({ _id: { $in: user.requestsInbox } }, 'username');
+
+    const requests = senders.map(sender => ({
+      senderId: sender._id,
+      senderUsername: sender.username
+    }));
+
+    res.status(200).json(requests);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
