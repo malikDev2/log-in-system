@@ -37,12 +37,12 @@ router.post('/friend-request', authenticate, async (req, res) => {
 
     if (!recipient) return res.status(404).json({ message: 'User not found' });
 
-    if (recipient.requestsInbox.includes(req.userId)) {
+    if (recipient.requestsInbox.includes(sender._id)) {
       return res.status(400).json({ message: 'Request already sent' });
     }
 
-    sender.requestsSent.push(recipientId);
-    recipient.requestsInbox.push(req.userId);
+    sender.requestsSent.push(recipient._id);
+    recipient.requestsInbox.push(sender._id);
     await sender.save();
     await recipient.save();
 
@@ -64,8 +64,8 @@ router.post('/accept-request', authenticate, async (req, res) => {
     user.requestsInbox = user.requestsInbox.filter(id => id.toString() !== senderId);
     sender.requestsSent = sender.requestsSent.filter(id => id.toString() !== req.userId);
 
-    user.friends.push(senderId);
-    sender.friends.push(req.userId);
+    user.friends.push(sender._id);
+    sender.friends.push(user._id);
 
     await user.save();
     await sender.save();
@@ -100,24 +100,21 @@ router.post('/decline-request', authenticate, async (req, res) => {
 // Get current user
 router.get('/me', authenticate, async (req, res) => {
   try {
-    const user = await User.findById(req.userId).populate('friends', 'username');;
+    const user = await User.findById(req.userId).populate('friends', 'username');
     res.status(200).json(user);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-// Get inbox requests with usernames
+// Get inbox requests
 router.get('/requests', authenticate, async (req, res) => {
   try {
-    const user = await User.findById(req.userId);
-    const senders = await User.find({ _id: { $in: user.requestsInbox } }, 'username');
-
-    const requests = senders.map(sender => ({
+    const user = await User.findById(req.userId).populate('requestsInbox', 'username');
+    const requests = user.requestsInbox.map(sender => ({
       senderId: sender._id,
       senderUsername: sender.username
     }));
-
     res.status(200).json(requests);
   } catch (error) {
     res.status(500).json({ error: error.message });
