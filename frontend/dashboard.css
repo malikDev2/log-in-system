@@ -10,6 +10,7 @@ html{
 
 .dash{
     display: flex;
+    flex-wrap: wrap;
     gap: 10px;
     height: 500px;
     border-radius: 20px;
@@ -169,5 +170,10 @@ html{
   margin-top: 10px;
 }
 
-
+@media (max-width: 1200px) {
+  .dash{
+    width: 90%
+  }
+  
+}
   
